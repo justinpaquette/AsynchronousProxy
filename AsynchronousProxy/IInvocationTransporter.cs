@@ -9,6 +9,6 @@ namespace AsynchronousProxy
 {
 	public interface IInvocationTransporter
 	{
-		void SendInvocation(IInvocation invocation);
+		void SendInvocation(IAsynchronousInvocation invocation);
 	}
 }

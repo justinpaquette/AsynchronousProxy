@@ -16,11 +16,19 @@ namespace AsynchronousProxy.Receivers
 			_container = container;
 		}
 
-		public void ReceiveInvocation(Castle.DynamicProxy.IInvocation invocation)
+		public async Task ReceiveInvocation(IAsynchronousInvocation invocation)
 		{
-			var target = _container.Resolve(invocation.TargetType);
-			
-			Invoke(invocation, target); //Something like this
+			invocation.Invoke(_container);
+		}
+	}
+
+	public static class IAsynchronousInvocationExtensions
+	{
+		public static void Invoke(this IAsynchronousInvocation invocation, UnityContainer container)
+		{
+			var target = container.Resolve(invocation.TargetType);
+
+			invocation.Method.Invoke(target, invocation.Arguments);
 		}
 	}
 }

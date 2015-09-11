@@ -9,6 +9,6 @@ namespace AsynchronousProxy
 {
 	public interface IInvocationReceiver
 	{
-		void ReceiveInvocation(IInvocation invocation);
+		Task ReceiveInvocation(IAsynchronousInvocation invocation);
 	}
 }

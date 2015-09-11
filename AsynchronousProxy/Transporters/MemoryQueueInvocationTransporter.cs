@@ -11,14 +11,14 @@ namespace AsynchronousProxy.Transporters
 {
 	public class MemoryQueueInvocationTransporter : IInvocationTransporter
 	{
-		private readonly Queue<IInvocation> _queue;
+		private readonly Queue<IAsynchronousInvocation> _queue;
 
-		public MemoryQueueInvocationTransporter(Queue<IInvocation> queue)
+		public MemoryQueueInvocationTransporter(Queue<IAsynchronousInvocation> queue)
 		{
 			_queue = queue;
 		}
 
-		public void SendInvocation(IInvocation invocation)
+		public void SendInvocation(IAsynchronousInvocation invocation)
 		{
 			_queue.Enqueue(invocation);
 		}

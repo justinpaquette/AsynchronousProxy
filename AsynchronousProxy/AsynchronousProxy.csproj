@@ -57,11 +57,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsynchronousProxy.cs" />
+    <Compile Include="AysnchronousProxyTarget.cs" />
+    <Compile Include="IAsynchronousInvocation.cs" />
     <Compile Include="IInvocationReceiver.cs" />
     <Compile Include="IInvocationTransporter.cs" />
+    <Compile Include="Invocations\AsynchronousInvocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Receivers\InvocationReceiver.cs" />
-    <Compile Include="Receivers\MemoryQueueInvocationReceiver.cs" />
     <Compile Include="Transporters\MemoryQueueInvocationTransporter.cs" />
   </ItemGroup>
   <ItemGroup>

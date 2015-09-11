@@ -1,4 +1,5 @@
-﻿using Castle.DynamicProxy;
+﻿using AsynchronousProxy.Invocations;
+using Castle.DynamicProxy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,9 @@ namespace AsynchronousProxy
 		{
 			_transporter = transporter;
 
-			var interceptor = new AsynchronousInterceptor(invocation => _transporter.SendInvocation(invocation));
+			var interceptor = new AsynchronousInterceptor(invocation => 
+				_transporter.SendInvocation(invocation.ToAsynchronousInvocation(typeof(T)))
+			);
 
 			var generator = new ProxyGenerator();
 			Object = generator.CreateInterfaceProxyWithoutTarget<T>(interceptor);
@@ -36,6 +39,19 @@ namespace AsynchronousProxy
 		public void Intercept(IInvocation invocation)
 		{
 			_onIntercept(invocation);
+		}
+	}
+
+	public static class IInvocationExtensions
+	{
+		public static IAsynchronousInvocation ToAsynchronousInvocation(this IInvocation invocation, Type type)
+		{
+			return new AsynchronousInvocation()
+			{
+				TargetType = type,
+				Method = invocation.Method,
+				Arguments = invocation.Arguments
+			};
 		}
 	}
 }
