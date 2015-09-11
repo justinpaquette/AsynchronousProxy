@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace AsynchronousProxy
 {
-	public interface IInvocationTransporter
+	public interface IInvocationPublisher
 	{
-		void SendInvocation(IAsynchronousInvocation invocation);
+		void Publish(IAsynchronousInvocation invocation);
 	}
 }

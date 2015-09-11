@@ -10,9 +10,9 @@ namespace AsynchronousProxy
 	public class AysnchronousProxyTarget<T>
 	{
 		private readonly T _target;
-		private readonly Func<Task<AsynchronousInvocation>> _receiver;
+		private readonly Func<Task<IAsynchronousInvocation>> _receiver;
 
-		public AysnchronousProxyTarget(T target, Func<Task<AsynchronousInvocation>> receiver)
+		public AysnchronousProxyTarget(T target, Func<Task<IAsynchronousInvocation>> receiver)
 		{
 			_target = target;
 			_receiver = receiver;

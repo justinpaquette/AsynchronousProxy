@@ -10,12 +10,22 @@ namespace AsynchronousProxy
 {
 	public  class AsynchronousProxy<T> where T : class
 	{
-		private IInvocationTransporter _transporter;
+		private IInvocationPublisher _publisher;
 
 		public AsynchronousProxy(Action<AsynchronousInvocation> onInvocation)
 		{
 			var interceptor = new AsynchronousInterceptor(invocation => 
 				onInvocation(invocation.ToAsynchronousInvocation(typeof(T)))
+			);
+
+			var generator = new ProxyGenerator();
+			Object = generator.CreateInterfaceProxyWithoutTarget<T>(interceptor);
+		}
+
+		public AsynchronousProxy(IInvocationPublisher publisher)
+		{
+			var interceptor = new AsynchronousInterceptor(invocation => 
+				publisher.Publish(invocation.ToAsynchronousInvocation(typeof(T)))
 			);
 
 			var generator = new ProxyGenerator();
