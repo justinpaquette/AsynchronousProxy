@@ -9,5 +9,6 @@ namespace AsynchronousProxyDemo.Test
 	public interface ISampleService
 	{
 		void Test();
+		Task TestTask();
 	}
 }

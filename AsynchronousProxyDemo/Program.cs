@@ -37,8 +37,7 @@ namespace AsynchronousProxyDemo
 
 			while(true)
 			{
-				proxy.Object.Test();
-
+				await proxy.Object.TestTask();
 				await Task.Delay(TimeSpan.FromSeconds(2));
 			}
 		}
