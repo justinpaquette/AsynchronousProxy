@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AsynchronousProxy.Invocations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,9 @@ namespace AsynchronousProxy
 	public class AysnchronousProxyTarget<T>
 	{
 		private readonly T _target;
-		private readonly IInvocationReceiver _receiver;
+		private readonly Func<Task<AsynchronousInvocation>> _receiver;
 
-		public AysnchronousProxyTarget(T target, IInvocationReceiver receiver)
+		public AysnchronousProxyTarget(T target, Func<Task<AsynchronousInvocation>> receiver)
 		{
 			_target = target;
 			_receiver = receiver;
@@ -21,7 +22,9 @@ namespace AsynchronousProxy
 		{
 			while(true)
 			{
-				
+				var invocation = await _receiver();
+
+				invocation.Method.Invoke(_target, invocation.Arguments);
 			}
 		}
 	}

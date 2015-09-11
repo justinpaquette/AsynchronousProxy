@@ -12,12 +12,10 @@ namespace AsynchronousProxy
 	{
 		private IInvocationTransporter _transporter;
 
-		public AsynchronousProxy(IInvocationTransporter transporter)
+		public AsynchronousProxy(Action<AsynchronousInvocation> onInvocation)
 		{
-			_transporter = transporter;
-
 			var interceptor = new AsynchronousInterceptor(invocation => 
-				_transporter.SendInvocation(invocation.ToAsynchronousInvocation(typeof(T)))
+				onInvocation(invocation.ToAsynchronousInvocation(typeof(T)))
 			);
 
 			var generator = new ProxyGenerator();
@@ -44,7 +42,7 @@ namespace AsynchronousProxy
 
 	public static class IInvocationExtensions
 	{
-		public static IAsynchronousInvocation ToAsynchronousInvocation(this IInvocation invocation, Type type)
+		public static AsynchronousInvocation ToAsynchronousInvocation(this IInvocation invocation, Type type)
 		{
 			return new AsynchronousInvocation()
 			{

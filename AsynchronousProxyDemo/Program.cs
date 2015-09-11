@@ -1,10 +1,13 @@
 ﻿using AsynchronousProxy;
+using AsynchronousProxy.Invocations;
 using AsynchronousProxy.Receivers;
 using AsynchronousProxy.Transporters;
 using AsynchronousProxyDemo.Test;
 using Castle.DynamicProxy;
 using Microsoft.Practices.Unity;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,50 +19,50 @@ namespace AsynchronousProxyDemo
 	{
 		static void Main(string[] args)
 		{
-			var container = new UnityContainer();
-			container.RegisterType<ISampleService, SampleService>();
-
-			var queue = new Queue<IAsynchronousInvocation>();
-
-			var transporter = new MemoryQueueInvocationTransporter(queue);
-			var proxy = new AsynchronousProxy<ISampleService>(transporter);
+			var queue = new ConcurrentQueue<AsynchronousInvocation>();
 
 			Task.WaitAll(new[]
 			{
-				CreateInvocations(proxy.Object),
-				ProcessQueue(queue, container)
+				Invoker(queue),
+				Receiver(queue)
 			});
 		}
 
-		public static async Task ProcessQueue(Queue<IAsynchronousInvocation> queue, UnityContainer container)
+		public static async Task Invoker(ConcurrentQueue<AsynchronousInvocation> queue)
 		{
-			var receiver = new InvocationReceiver(container);
+			var proxy = new AsynchronousProxy<ISampleService>(invocation =>
+			{
+				queue.Enqueue(invocation);
+			});
 
 			while(true)
 			{
-				if(queue.Count > 0)
-				{
-					var invocation = queue.Dequeue();
+				proxy.Object.Test();
 
-					if(invocation != null)
-					{
-						receiver.ReceiveInvocation(invocation);
-					}
-				}
-				else
-				{
-					await Task.Delay(TimeSpan.FromMilliseconds(500));
-				}
+				await Task.Delay(TimeSpan.FromSeconds(2));
 			}
 		}
 
-		public static async Task CreateInvocations(ISampleService service)
+		public static async Task Receiver(ConcurrentQueue<AsynchronousInvocation> queue)
 		{
-			while(true)
-			{
-				service.Test();
-				await Task.Delay(TimeSpan.FromSeconds(1));
-			}
+			var service = new SampleService();
+
+			var receiver = new AysnchronousProxyTarget<ISampleService>(
+				service,
+				() => Task.Run(() =>
+				{
+					while (true)
+					{
+						var invocation = default(AsynchronousInvocation);
+						if (queue.TryDequeue(out invocation))
+						{
+							return invocation;
+						}
+					}
+				})
+			);
+
+			await receiver.Start();
 		}
 	}
 }
