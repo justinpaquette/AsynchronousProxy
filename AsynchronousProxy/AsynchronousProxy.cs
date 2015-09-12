@@ -1,4 +1,5 @@
 ﻿using AsynchronousProxy.Invocations;
+using AsynchronousProxy.Publishers;
 using Castle.DynamicProxy;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,24 @@ namespace AsynchronousProxy
 {
 	public  class AsynchronousProxy<T> where T : class
 	{
-		private IInvocationTransporter _transporter;
+		private readonly IInvocationTransporter _transporter;
+		private readonly IInvocationPublisher _publisher;
 
-		public AsynchronousProxy(Action<AsynchronousInvocation> onInvocation)
+		public AsynchronousProxy(Action<IAsynchronousInvocation> onInvocation)
 		{
-			var interceptor = new AsynchronousInterceptor(invocation => 
+			SetupInterceptor(onInvocation);
+		}
+
+		public AsynchronousProxy(IInvocationPublisher publisher)
+		{
+			_publisher = publisher;
+
+			SetupInterceptor(invocation => _publisher.Publish(invocation));
+		}
+
+		private void SetupInterceptor(Action<IAsynchronousInvocation> onInvocation)
+		{
+			var interceptor = new AsynchronousInterceptor(invocation =>
 				onInvocation(invocation.ToAsynchronousInvocation(typeof(T)))
 			);
 

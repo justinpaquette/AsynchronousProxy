@@ -63,8 +63,9 @@
     <Compile Include="IInvocationTransporter.cs" />
     <Compile Include="Invocations\AsynchronousInvocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Publishers\IInvocationPublisher.cs" />
+    <Compile Include="Publishers\MemoryQueuePublisher.cs" />
     <Compile Include="Receivers\InvocationReceiver.cs" />
-    <Compile Include="Transporters\MemoryQueueInvocationTransporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

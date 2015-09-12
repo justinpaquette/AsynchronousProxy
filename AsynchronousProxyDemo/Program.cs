@@ -1,5 +1,6 @@
 ﻿using AsynchronousProxy;
 using AsynchronousProxy.Invocations;
+using AsynchronousProxy.Publishers;
 using AsynchronousProxy.Receivers;
 using AsynchronousProxy.Transporters;
 using AsynchronousProxyDemo.Test;
@@ -19,7 +20,7 @@ namespace AsynchronousProxyDemo
 	{
 		static void Main(string[] args)
 		{
-			var queue = new ConcurrentQueue<AsynchronousInvocation>();
+			var queue = new ConcurrentQueue<IAsynchronousInvocation>();
 
 			Task.WaitAll(new[]
 			{
@@ -28,21 +29,20 @@ namespace AsynchronousProxyDemo
 			});
 		}
 
-		public static async Task Invoker(ConcurrentQueue<AsynchronousInvocation> queue)
+		public static async Task Invoker(ConcurrentQueue<IAsynchronousInvocation> queue)
 		{
-			var proxy = new AsynchronousProxy<ISampleService>(invocation =>
-			{
-				queue.Enqueue(invocation);
-			});
+			var proxy = new AsynchronousProxy<ISampleService>(new MemoryQueuePublisher(queue));
+
+			var service = proxy.Object;
 
 			while(true)
 			{
-				await proxy.Object.TestTask();
+				service.Test();
 				await Task.Delay(TimeSpan.FromSeconds(2));
 			}
 		}
 
-		public static async Task Receiver(ConcurrentQueue<AsynchronousInvocation> queue)
+		public static async Task Receiver(ConcurrentQueue<IAsynchronousInvocation> queue)
 		{
 			var service = new SampleService();
 
@@ -52,10 +52,10 @@ namespace AsynchronousProxyDemo
 				{
 					while (true)
 					{
-						var invocation = default(AsynchronousInvocation);
+						var invocation = default(IAsynchronousInvocation);
 						if (queue.TryDequeue(out invocation))
 						{
-							return invocation;
+							return invocation as AsynchronousInvocation;
 						}
 					}
 				})
