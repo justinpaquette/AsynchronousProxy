@@ -47,6 +47,7 @@ namespace AsynchronousProxy
 		public void Intercept(IInvocation invocation)
 		{
 			_onIntercept(invocation);
+			invocation.Proceed();
 		}
 	}
 

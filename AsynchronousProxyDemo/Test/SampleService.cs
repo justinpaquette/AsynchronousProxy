@@ -15,7 +15,7 @@ namespace AsynchronousProxyDemo.Test
 
 		public async Task TestTask()
 		{
-			Console.WriteLine("hellotask");
+			//Console.WriteLine("hellotask");
 		}
 	}
 }
