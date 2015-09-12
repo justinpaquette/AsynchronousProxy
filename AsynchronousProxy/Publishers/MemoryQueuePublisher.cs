@@ -10,7 +10,7 @@ namespace AsynchronousProxy.Publishers
 	public class MemoryQueuePublisher : IInvocationPublisher
 	{
 		private readonly ConcurrentQueue<IAsynchronousInvocation> _queue;
-		
+
 		public MemoryQueuePublisher(ConcurrentQueue<IAsynchronousInvocation> queue)
 		{
 			_queue = queue;

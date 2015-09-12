@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsynchronousProxyDemo.Test
+namespace AsynchronousProxy.Publishers
 {
-	public interface ISampleService
+	public interface IInvocationPublisher
 	{
-		void Test();
+		void Publish(IAsynchronousInvocation invocation);
 	}
 }

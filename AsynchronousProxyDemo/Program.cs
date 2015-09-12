@@ -28,16 +28,15 @@ namespace AsynchronousProxyDemo
 			});
 		}
 
-		public static async Task Invoker(ConcurrentQueue<AsynchronousInvocation> queue)
+		public static async Task Invoker(ConcurrentQueue<IAsynchronousInvocation> queue)
 		{
-			var proxy = new AsynchronousProxy<ISampleService>(invocation =>
-			{
-				queue.Enqueue(invocation);
-			});
+			var proxy = new AsynchronousProxy<ISampleService>(new MemoryQueuePublisher(queue));
+
+			var service = proxy.Object;
 
 			while (true)
 			{
-				await proxy.Object.TestTask();
+				service.Test();
 				await Task.Delay(TimeSpan.FromSeconds(2));
 			}
 		}
@@ -55,7 +54,7 @@ namespace AsynchronousProxyDemo
 						var invocation = default(IAsynchronousInvocation);
 						if (queue.TryDequeue(out invocation))
 						{
-							return invocation;
+							return invocation as AsynchronousInvocation;
 						}
 					}
 				})
