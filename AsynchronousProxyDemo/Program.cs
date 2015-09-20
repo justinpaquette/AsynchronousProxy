@@ -2,7 +2,6 @@
 using AsynchronousProxy.Invocations;
 using AsynchronousProxy.Publishers;
 using AsynchronousProxy.Receivers;
-using AsynchronousProxy.Transporters;
 using AsynchronousProxyDemo.Test;
 using Castle.DynamicProxy;
 using Microsoft.Practices.Unity;
@@ -37,7 +36,7 @@ namespace AsynchronousProxyDemo
 
 			while(true)
 			{
-				service.Test();
+				await service.TestAsync();
 				await Task.Delay(TimeSpan.FromSeconds(2));
 			}
 		}

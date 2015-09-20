@@ -8,6 +8,6 @@ namespace AsynchronousProxy.Publishers
 {
 	public interface IInvocationPublisher
 	{
-		void Publish(IAsynchronousInvocation invocation);
+		Task Publish(IAsynchronousInvocation invocation);
 	}
 }

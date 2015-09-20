@@ -16,9 +16,9 @@ namespace AsynchronousProxy.Publishers
 			_queue = queue;
 		}
 
-		public void Publish(IAsynchronousInvocation invocation)
+		public async Task Publish(IAsynchronousInvocation invocation)
 		{
-			_queue.Enqueue(invocation);
+			await Task.Run(() => _queue.Enqueue(invocation));
 		}
 	}
 }
